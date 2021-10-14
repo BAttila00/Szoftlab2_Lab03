@@ -1,6 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Room, User, Message } from '../../models';
 import * as signalR from '@aspnet/signalr';
+import { HubBuilderService } from 'src/app/services/hub-builder.service';
 
 @Component({
   selector: 'app-lobby',
@@ -32,6 +33,7 @@ constructor(hubBuilder: HubBuilderService) {
   this.connection.on("UserEntered", user => this.userEntered(user));
   this.connection.on("UserLeft", userId => this.userLeft(userId));
   this.connection.on("SetMessages", messages => this.setMessages(messages));
+  this.connection.on("RecieveMessage", message => this.recieveMessage(message));
   // TODO: További eseménykezelőket is kell majd beregisztrálnunk itt.
   this.peeps = [];
   this.lobbyMessages = [];
@@ -58,7 +60,8 @@ constructor(hubBuilder: HubBuilderService) {
   }
 
   recieveMessage(message: Message) {
-    // TODO: beérkező üzenet kezelése
+    // A szerver új üzenet érkezését jelzi:
+    this.lobbyMessages.splice(0, 0, message);
   }
 
   userEntered(user: User) {
@@ -84,7 +87,18 @@ constructor(hubBuilder: HubBuilderService) {
   }
 
   sendMessage() {
-    // TODO: üzenet küldése a szerverre
+    // A szervernek az invoke függvény meghívásával tudunk küldeni üzenetet.
+    this.connection.invoke("SendMessageToLobby", this.chatMessage);
+    // A kérés szintén egy Promise, tehát feliratkoztathatnánk rá eseménykezelőt, ami akkor sül el, ha
+    // a szerver jóváhagyta a kérést (vagy esetleg hibára futott). A szerver egyes metódusai Task
+    // helyett Task<T>-vel is visszatérhetnek, ekkor a válasz eseménykezelőjében megkapjuk a válasz
+    // objektumot is:
+    // this.connection.invoke("SendMessageToLobby", this.chatMessage)
+    // .then((t: T) => {
+    // console.log(t);
+    // })
+    // .catch(console.error);
+    this.chatMessage = "";
   }
 
   createRoom() {
