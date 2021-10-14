@@ -1,0 +1,14 @@
+<div class="container-fluid">
+  <nav class="navbar navbar-light bg-light">
+    <a routerLink="/" class="navbar-brand">ChattR!</a>
+    <ul *ngIf="user != null" class="nav justify-content-end">
+      <li class="nav-item" ngbDropdown>
+        <a class="nav-link dropdown-toggle" routerLink ngbDropdownToggle>Hello, {{user.name}}!</a>
+        <div class="dropdown-menu" ngbDropdownMenu>
+          <a (click)="logout()" class="btn btn-default w-100">Logout</a>
+        </div>
+      </li>
+    </ul>
+  </nav>
+  <router-outlet></router-outlet>
+</div>

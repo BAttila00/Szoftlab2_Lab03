@@ -1,0 +1,29 @@
+<div class="row justify-content-center">
+  <form (ngSubmit)="signin()" #form="ngForm">
+    <div class="form-group">
+      <label for="username">Username</label>
+      <input class="form-control" autocomplete="off" name="username" id="username" [(ngModel)]="username" required />
+    </div>
+    <div class="form-group">
+      <label for="password">Password</label>
+      <input class="form-control" type="password" name="password" id="password" [(ngModel)]="password" required #passwordModel="ngModel" />
+    </div>
+
+    <button [disabled]="loading || !form.valid" class="w-100 btn btn-primary" type="submit">Sign {{signUpVisible ? "up" : "in"}} to ChattR</button>
+
+    <ng-container *ngIf="signUpVisible;else:signUp">
+      <button [disabled]="loading" type="button" class="w-100 my-2 btn btn-light" (click)="signUpVisible = false; errors = null">Have an account? Sign in here!</button>
+    </ng-container>
+
+    <ng-container *ngIf="!signUpVisible" #signUp>
+      <button [disabled]="loading" type="button" class="w-100 my-2 btn btn-light" (click)="signUpVisible = true; errors = null">No account? Sign up here!</button>
+    </ng-container>
+
+    <div *ngIf="errors" class="text-center">
+      Sorry, an error occured. Please, try again.
+      <div class="text-danger" *ngFor="let error of errors">
+        {{error}}
+      </div>
+    </div>
+  </form>
+</div>
