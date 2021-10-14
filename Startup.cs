@@ -1,4 +1,5 @@
 using ChattR.Data;
+using ChattR.Hubs;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -35,6 +36,8 @@ namespace ChattR
             {
                 configuration.RootPath = "ClientApp/dist";
             });
+
+            services.AddSignalR();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -54,7 +57,7 @@ namespace ChattR
 
             app.UseAuthentication();
             app.UseMvc();
-
+            app.UseSignalR(r => r.MapHub<ChattRHub>("/chattrhub"));
             app.UseSpa(spa =>
             {
                 // To learn more about options for serving an Angular SPA from ASP.NET Core,
